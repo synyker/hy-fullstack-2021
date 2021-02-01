@@ -34,16 +34,18 @@ const Statistics = (props) => {
     <div>
       <h1>statistics</h1>
       { all > 0 && (
-        <div>
-          <StatisticsLine text={"good"} value={good} />
-          <StatisticsLine text={"neutral"} value={neutral} />
-          <StatisticsLine text={"bad"} value={bad} />
-          <StatisticsLine text={"all"} value={all} />
-          <StatisticsLine text={"average"} value={average} />
-          <StatisticsLine text={"positive"} value={positive} />
-        </div>
+        <table>
+          <tbody>
+            <StatisticsLine text={"good"} value={good} />
+            <StatisticsLine text={"neutral"} value={neutral} />
+            <StatisticsLine text={"bad"} value={bad} />
+            <StatisticsLine text={"all"} value={all} />
+            <StatisticsLine text={"average"} value={average} />
+            <StatisticsLine text={"positive"} value={positive} />
+          </tbody>
+        </table>
       )}
-      { all == 0 && (
+      { all === 0 && (
         <p>No feedback given</p>
       )}
     </div>
@@ -53,7 +55,10 @@ const Statistics = (props) => {
 const StatisticsLine = (props) => {
   const { text, value } = props;
   return (
-    <p>{text} {value}</p>
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
   )
 }
 
