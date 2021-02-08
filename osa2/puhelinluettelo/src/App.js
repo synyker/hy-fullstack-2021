@@ -6,6 +6,8 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newPhonenumber, setNewPhonenumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null)
 
   useEffect(() => {
     console.log("effect");
@@ -47,6 +49,8 @@ const App = () => {
   const createPerson = (person) => {
     personService.create(person).then((response) => {
       setPersons(persons.concat(response.data));
+      setSuccess(`Added person ${person.name}`)
+      setTimeout(() => { setSuccess(null)}, 5000)
     });
   };
 
@@ -55,6 +59,8 @@ const App = () => {
       setPersons(
         persons.map((person) => (person.id !== newPerson.id ? person : response.data))
       );
+      setSuccess(`Updated person ${newPerson.name}`)
+      setTimeout(() => { setSuccess(null)}, 5000)
     });
   };
 
@@ -67,6 +73,8 @@ const App = () => {
             return person.id !== id;
           })
         );
+        setSuccess(`Deleted person ${id}`)
+        setTimeout(() => { setSuccess(null)}, 5000)
       });
     };
     return handler;
@@ -79,6 +87,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={error} type={"error"} />
+      <Notification message={success} type={"success"} />
       <FilterForm handler={handleFilterChange} />
       <AddPersonForm
         nameChangeHandler={handleNewNameChange}
@@ -144,6 +154,16 @@ const Person = (props) => {
       <button onClick={deleteHandler(person.id)}>delete</button>
     </div>
   );
+};
+
+const Notification = ({ message, type }) => {
+  if (message === null) return null;
+
+  return (
+    <div class={type}>
+      {message}
+    </div>
+  )
 };
 
 export default App;
