@@ -8,8 +8,14 @@ const App = () => {
     { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ]);
 
+  
   const [newName, setNewName] = useState("");
   const [newPhonenumber, setNewPhonenumber] = useState("");
+  const [filter, setFilter] = useState("");
+  
+  const personsToShow = filter.length === 0 ? persons : persons.filter(person => {
+    return person.name.toLowerCase().includes(filter.toLowerCase())
+  })
 
   const handleNewNameChange = (event) => {
     setNewName(event.target.value);
@@ -21,7 +27,6 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-    console.log("form submit", event.target);
     const found = persons.findIndex((person) => person.name === newName);
     if (found < 0) {
       setPersons(persons.concat({ name: newName, number: newPhonenumber }));
@@ -29,9 +34,16 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
     }
   };
+
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
+ 
   return (
     <div>
       <h2>Phonebook</h2>
+      filter shown with <input onChange={handleFilterChange} />
+      <h2>add new</h2>
       <form onSubmit={addPerson}>
         <div>
           name: <input onChange={handleNewNameChange} />
@@ -43,7 +55,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       {persons &&
-        persons.map((person) => {
+        personsToShow.map((person) => {
           return <p key={person.name}>{person.name} {person.number}</p>;
         })}
     </div>
