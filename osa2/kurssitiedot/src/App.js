@@ -22,7 +22,7 @@ const App = () => {
       {
         id: 4,
         name: "Extra part",
-        exercises: 6,
+        exercises: 11,
       },
     ],
   };
@@ -40,7 +40,7 @@ const Course = (props) => {
     <div>
       <Header name={course.name} />
       <Content parts={course.parts} />
-      {/* <Total parts={course.parts} /> */}
+      <Total parts={course.parts} />
     </div>
   );
 };
@@ -71,13 +71,11 @@ const Part = (props) => {
 };
 
 const Total = (props) => {
-  const { parts } = props
+  const { parts } = props;
+  const total = parts.reduce((a, b) => ({ exercises: a.exercises + b.exercises }))
   return (
     <p>
-      Number of exercises{" "}
-      {parts[0].exercises +
-        parts[1].exercises +
-        parts[2].exercises}
+      Number of exercises {total.exercises}
     </p>
   );
 };
