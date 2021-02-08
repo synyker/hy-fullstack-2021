@@ -35,7 +35,13 @@ const App = () => {
     event.preventDefault();
     const found = persons.findIndex((person) => person.name === newName);
     if (found < 0) {
-      setPersons(persons.concat({ name: newName, number: newPhonenumber }));
+      axios
+        .post('http://localhost:3001/persons', { name: newName, number: newPhonenumber })
+        .then(response => {
+          setPersons(persons.concat(response.data));
+          setNewName("");
+          setNewPhonenumber("");
+        })
     } else {
       alert(`${newName} is already added to phonebook`);
     }
