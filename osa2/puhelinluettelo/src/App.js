@@ -2,27 +2,29 @@ import React, { useState } from "react";
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
+    { name: "Arto Hellas", number: "040-123456" },
+    { name: "Ada Lovelace", number: "39-44-5323523" },
+    { name: "Dan Abramov", number: "12-43-234345" },
+    { name: "Mary Poppendieck", number: "39-23-6423122" },
   ]);
 
-  
   const [newName, setNewName] = useState("");
   const [newPhonenumber, setNewPhonenumber] = useState("");
   const [filter, setFilter] = useState("");
-  
-  const personsToShow = filter.length === 0 ? persons : persons.filter(person => {
-    return person.name.toLowerCase().includes(filter.toLowerCase())
-  })
+
+  const personsToShow =
+    filter.length === 0
+      ? persons
+      : persons.filter((person) => {
+          return person.name.toLowerCase().includes(filter.toLowerCase());
+        });
 
   const handleNewNameChange = (event) => {
     setNewName(event.target.value);
   };
 
   const handleNewPhonenumberChange = (event) => {
-    setNewPhonenumber(event.target.value)
+    setNewPhonenumber(event.target.value);
   };
 
   const addPerson = (event) => {
@@ -38,27 +40,64 @@ const App = () => {
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
   };
- 
+
   return (
     <div>
       <h2>Phonebook</h2>
-      filter shown with <input onChange={handleFilterChange} />
+      <FilterForm handler={handleFilterChange} />
+      <AddPersonForm 
+        nameChangeHandler={handleNewNameChange}
+        numberChangeHandler={handleNewPhonenumberChange}
+        submitHandler={addPerson}
+      />
+      <Persons persons={personsToShow} />
+    </div>
+  );
+};
+
+const FilterForm = (props) => {
+  const { handler } = props;
+  return (
+    <div>
+      filter shown with <input onChange={handler} />
+    </div>
+  );
+};
+
+const AddPersonForm = (props) => {
+  const { nameChangeHandler, numberChangeHandler, submitHandler } = props;
+  return (
+    <div>
       <h2>add new</h2>
-      <form onSubmit={addPerson}>
+      <form onSubmit={submitHandler}>
         <div>
-          name: <input onChange={handleNewNameChange} />
-          number: <input onChange={handleNewPhonenumberChange} />
+          name: <input onChange={nameChangeHandler} />
+          number: <input onChange={numberChangeHandler} />
         </div>
         <div>
           <button type="submit">add</button>
         </div>
       </form>
-      <h2>Numbers</h2>
-      {persons &&
-        personsToShow.map((person) => {
-          return <p key={person.name}>{person.name} {person.number}</p>;
-        })}
     </div>
+  );
+};
+
+const Persons = (props) => {
+  const { persons } = props;
+  return (
+    <div>
+      <h2>Numbers</h2>
+      {persons && persons.map((person) => <Person key={person.name} person={person} />)}
+    </div>
+  );
+};
+
+const Person = (props) => {
+  const { person } = props;
+  return (
+    <p>
+      {person.name} {person.number}
+    </p>
   );
 };
 
