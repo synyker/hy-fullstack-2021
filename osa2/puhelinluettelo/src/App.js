@@ -33,28 +33,41 @@ const App = () => {
     event.preventDefault();
     const found = persons.findIndex((person) => person.name === newName);
     if (found < 0) {
-      personService
-        .create({ name: newName, number: newPhonenumber })
-        .then((response) => {
-          setPersons(persons.concat(response.data));
-          setNewName("");
-          setNewPhonenumber("");
-        });
+      createPerson({ name: newName, number: newPhonenumber });
     } else {
-      alert(`${newName} is already added to phonebook`);
+      const { id, name } = persons[found];
+      updatePerson({
+        id: id,
+        name: name,
+        number: newPhonenumber,
+      });
     }
+  };
+
+  const createPerson = (person) => {
+    personService.create(person).then((response) => {
+      setPersons(persons.concat(response.data));
+    });
+  };
+
+  const updatePerson = (newPerson) => {
+    personService.update(newPerson).then((response) => {
+      setPersons(
+        persons.map((person) => (person.id !== newPerson.id ? person : response.data))
+      );
+    });
   };
 
   const deletePerson = (id) => {
     const handler = () => {
-      console.log(id)
-      personService
-        .remove(id)
-        .then((response) => {
-          setPersons(persons.filter((person) => {
-            return person.id !== id
-          }))
-        })
+      console.log(id);
+      personService.remove(id).then((response) => {
+        setPersons(
+          persons.filter((person) => {
+            return person.id !== id;
+          })
+        );
+      });
     };
     return handler;
   };
