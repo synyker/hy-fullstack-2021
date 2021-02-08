@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import personService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -9,13 +9,11 @@ const App = () => {
 
   useEffect(() => {
     console.log("effect");
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {
-        setPersons(response.data);
-      });
-  }, [])
-  console.log("render", persons.length)
+    personService.getAll().then((response) => {
+      setPersons(response.data);
+    });
+  }, []);
+  console.log("render", persons.length);
   const personsToShow =
     filter.length === 0
       ? persons
@@ -35,16 +33,30 @@ const App = () => {
     event.preventDefault();
     const found = persons.findIndex((person) => person.name === newName);
     if (found < 0) {
-      axios
-        .post('http://localhost:3001/persons', { name: newName, number: newPhonenumber })
-        .then(response => {
+      personService
+        .create({ name: newName, number: newPhonenumber })
+        .then((response) => {
           setPersons(persons.concat(response.data));
           setNewName("");
           setNewPhonenumber("");
-        })
+        });
     } else {
       alert(`${newName} is already added to phonebook`);
     }
+  };
+
+  const deletePerson = (id) => {
+    const handler = () => {
+      console.log(id)
+      personService
+        .remove(id)
+        .then((response) => {
+          setPersons(persons.filter((person) => {
+            return person.id !== id
+          }))
+        })
+    };
+    return handler;
   };
 
   const handleFilterChange = (event) => {
@@ -55,12 +67,12 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <FilterForm handler={handleFilterChange} />
-      <AddPersonForm 
+      <AddPersonForm
         nameChangeHandler={handleNewNameChange}
         numberChangeHandler={handleNewPhonenumberChange}
         submitHandler={addPerson}
       />
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} deleteHandler={deletePerson} />
     </div>
   );
 };
@@ -93,21 +105,31 @@ const AddPersonForm = (props) => {
 };
 
 const Persons = (props) => {
-  const { persons } = props;
+  const { persons, deleteHandler } = props;
   return (
     <div>
       <h2>Numbers</h2>
-      {persons && persons.map((person) => <Person key={person.name} person={person} />)}
+      {persons &&
+        persons.map((person) => (
+          <Person
+            key={person.name}
+            person={person}
+            deleteHandler={deleteHandler}
+          />
+        ))}
     </div>
   );
 };
 
 const Person = (props) => {
-  const { person } = props;
+  const { person, deleteHandler } = props;
   return (
-    <p>
-      {person.name} {person.number}
-    </p>
+    <div>
+      <span>
+        {person.name} {person.number}
+      </span>
+      <button onClick={deleteHandler(person.id)}>delete</button>
+    </div>
   );
 };
 
